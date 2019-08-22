@@ -45,28 +45,36 @@ class PokemonDetailVC: UIViewController {
                 
                 switch res {
                 case .success(let pokemon):
-                    print("y", pokemon)
+                    self?.fetchPokemonDescriptionJson{(res) in
+                        switch res {
+                        case .success(let pokemon):
+                            self?.fetchPokemonEvoData{(res) in
+                                switch res {
+                                case .success(let pokemon): break
+                                    
+                                case .failure(let err):
+                                    print(err)
+                                }
+                            }
+                        case .failure(let err):
+                            print(err)
+                        }
+                    }
                   
                 case .failure(let err):
-                    print("f", err)
+                    print(err)
                 }
             }
-            self?.fetchPokemonDescriptionJson{(res) in
-                switch res {
-                case.success(let pokemon):
-                    print("yy")
-                case .failure(let err):
-                    print("ff")
-                }
-            }
+            
         }
+        
     }
  
     
         func fetchPokemonDescriptionJson(completion: @escaping (Result<Pokemon, Error>) -> Void) {
             let descriptionUrlString = "https://pokeapi.co/api/v2/pokemon-species/\(pokemon.pokedexId)"
-            DispatchQueue.main.async {
-                [weak self] in
+            
+            
                 guard let descriptionUrl = URL(string: descriptionUrlString) else {return}
                 URLSession.shared.dataTask(with: descriptionUrl) { (data, response, err) in
                     if let err = err {
@@ -76,31 +84,32 @@ class PokemonDetailVC: UIViewController {
                     do {
                         var pokemonDescript = try JSONDecoder().decode(Pokemon.self, from: data!)
                         DispatchQueue.main.async {
+                            [weak self] in
                             for version in pokemonDescript.description! {
                                 if version.version.name == "emerald", version.language.name == "en" {
                                    
-                                    self?.descriptionLbl.text = version.flavorText
+                                    self!.descriptionLbl.text = version.flavorText
                                 } else if version.version.name == "ultra-sun" , version.language.name == "en" {
-                                    self?.descriptionLbl.text = version.flavorText
+                                    self!.descriptionLbl.text = version.flavorText
                                 } else if version.version.name == "alpha-sapphire" , version.language.name == "en" {
-                                    self?.descriptionLbl.text = version.flavorText
+                                    self!.descriptionLbl.text = version.flavorText
                                 }
                             }
-                            self!.evoUrl = pokemonDescript.evolutionChainURL!.url
-                            print(self!.evoUrl)
+                            self?.evoUrl = pokemonDescript.evolutionChainURL!.url
+                           
+                            
                             completion(.success(pokemonDescript))
                         }
                     } catch let jsonError {
                         completion(.failure(jsonError))
                     }
                 }.resume()
-            }
+            
         }
     
     func fetchPokemonJson(completion: @escaping (Result<Pokemon, Error>) -> Void) {
         let jsonUrlString = "https://pokeapi.co/api/v2/pokemon/\(pokemon.pokedexId)"
-        DispatchQueue.main.async{
-          [weak self] in
+        
         
         guard let url = URL(string: jsonUrlString) else {return}
         
@@ -131,10 +140,10 @@ class PokemonDetailVC: UIViewController {
                         }
                     }
                     if pokemon.types!.count > 1 {
-                       self?.typeLbl.text = "\(pokemon.types![0].type!.TypeName!.capitalized) / \(pokemon.types![1].type!.TypeName!.capitalized)"
+                       self?.typeLbl.text = "\(pokemon.types![0].type!.typeName!.capitalized) / \(pokemon.types![1].type!.typeName!.capitalized)"
                         
                     } else {
-                        self?.typeLbl.text = "\(pokemon.types![0].type!.TypeName!.capitalized)"
+                        self?.typeLbl.text = "\(pokemon.types![0].type!.typeName!.capitalized)"
                     }
                     
                     
@@ -144,15 +153,13 @@ class PokemonDetailVC: UIViewController {
                 completion(.failure(jsonError))
             }
             }.resume()
-    }
+    
         }
     
     func fetchPokemonEvoData (completion: @escaping (Result<Pokemon, Error>) -> Void) {
         let evoJsonString = evoUrl
-        DispatchQueue.main.async{
-            [weak self] in
-            
-            guard let evoUrl = URL(string: evoJsonString) else {return}
+        
+        guard let evoUrl = URL(string: evoJsonString) else {return}
             
             URLSession.shared.dataTask(with: evoUrl) { (data, response, err) in
                 if let err = err {
@@ -164,16 +171,54 @@ class PokemonDetailVC: UIViewController {
                     var pokemonEvo = try JSONDecoder().decode(Pokemon.self, from: data!)
                     
                     DispatchQueue.main.async { [weak self] in
-                        if pokemonEvo.pokeName == pokemonEvo.evolutionDetails!.species.name {
+                        
+                        if self?.pokemon.pokeName?.lowercased() == pokemonEvo.evolutionDetails!.species.name && (pokemonEvo.evolutionDetails?.evolvesTo!.isEmpty)! {
                             
+                            self?.evoLbl.text = "Next Evolution: None"
+                            self?.nextEvoImg.isHidden = true
+                            
+                        } else if self!.pokemon.pokeName?.lowercased() == pokemonEvo.evolutionDetails!.species.name && (pokemonEvo.evolutionDetails?.evolvesTo!.count)! == 1 {
+                           
+                            self?.evoLbl.text = "Next Evolution: \(pokemonEvo.evolutionDetails!.evolvesTo![0].nextSpecies!.name!.capitalized)"
+                            if let url = pokemonEvo.evolutionDetails!.evolvesTo![0].nextSpecies!.url {
+                                let newStr = url.replacingOccurrences(of: "https://pokeapi.co/api/v2/pokemon-species/", with: "")
+                                let newEvoId = newStr.replacingOccurrences(of: "/", with: "")
+                                pokemonEvo.nextEvoId = newEvoId
+                            }
+                            
+                            self?.nextEvoImg.image = UIImage(named: pokemonEvo.nextEvoId!)
+                            
+                        } else if self!.pokemon.pokeName?.lowercased() == pokemonEvo.evolutionDetails!.evolvesTo![0].nextSpecies!.name && (pokemonEvo.evolutionDetails?.evolvesTo![0].nextEvolvesTo!.count)! == 1 {
+                            
+                            self?.evoLbl.text = "Next Evolution: \(pokemonEvo.evolutionDetails!.evolvesTo![0].nextEvolvesTo![0].nextSpecies!.name!.capitalized)"
+                            if let url = pokemonEvo.evolutionDetails!.evolvesTo![0].nextEvolvesTo![0].nextSpecies!.url {
+                                let newStr = url.replacingOccurrences(of: "https://pokeapi.co/api/v2/pokemon-species/", with: "")
+                                let newEvoId = newStr.replacingOccurrences(of: "/", with: "")
+                                pokemonEvo.nextEvoId = newEvoId
+                            }
+                            
+                            self?.nextEvoImg.image = UIImage(named: pokemonEvo.nextEvoId!)
+                            
+                        } else if self!.pokemon.pokeName?.lowercased() == pokemonEvo.evolutionDetails!.species.name, (pokemonEvo.evolutionDetails?.evolvesTo!.count)! > 1 {
+                            
+                            self?.evoLbl.text = "Next Evolution: Multiple Choices"
+                            
+                        } else if self!.pokemon.pokeName?.lowercased() == pokemonEvo.evolutionDetails!.evolvesTo![0].nextSpecies!.name, (pokemonEvo.evolutionDetails!.evolvesTo![0].nextEvolvesTo!.count) > 1 {
+                            
+                            self?.evoLbl.text = "Next Evolution: Multiple Choices"
+                                
+                        } else {
+                            self?.evoLbl.text = "Next Evolution: None"
+                            self?.nextEvoImg.isHidden = true
                         }
                         
+                        completion(.success(pokemonEvo))
                     }
                 } catch let jsonError {
                     completion(.failure(jsonError))
                 }
     }.resume()
-    }
+    
     }
 
 

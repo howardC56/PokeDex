@@ -11,38 +11,35 @@ import Foundation
 
 // Pokemon evolution
 struct PokeName: Decodable {
-    var name: String
+    var name: String?
+    var url: String?
     
     enum CodingKeys: String, CodingKey {
         case name = "name"
+        case url = "url"
     }
 }
 
 struct Species: Decodable {
-    var species: PokeName
-    var evolvesTo: [Species]?
+    var nextSpecies: PokeName?
+    var nextEvolvesTo: [Species]?
     
     enum CodingKeys: String, CodingKey {
-        case species = "species"
-        case evolvesTo = "evolves_to"
+        case nextSpecies = "species"
+        case nextEvolvesTo = "evolves_to"
     }
 }
 
-struct Evolves: Decodable {
-    var evolvesTo: [Species]?
-    
-    enum CodingKeys: String, CodingKey {
-        case evolvesTo = "evolves_to"
-    }
-}
+
 
 struct Chain: Decodable {
-    var chain: [Evolves]?
+    var evolvesTo: [Species]?
     var species: PokeName
+    
     enum CodingKeys: String, CodingKey {
-        case chain = "chain"
+        case evolvesTo = "evolves_to"
         case species = "species"
-    }
+}
 }
 
 // pokemon evolution url
@@ -106,16 +103,16 @@ struct StatName: Decodable {
 
 // Pokemon Type
 struct Name: Decodable {
-    var TypeName: String?
+    var typeName: String?
     
     enum CodingKeys: String, CodingKey {
-        case TypeName = "name"
+        case typeName = "name"
     }
 }
 
 
 
-struct Type: Decodable {
+struct Types: Decodable {
     var type: Name?
     
     enum CodingKeys: String, CodingKey {
@@ -129,7 +126,7 @@ struct Pokemon: Decodable {
     var pokeName: String?
     private var pokePokedexId: Int?
     var description: [FlavorText]?
-    var types: [Type]?
+    var types: [Types]?
     var stats: [Stats]?
     var height: Int?
     var weight: Int?
@@ -138,6 +135,7 @@ struct Pokemon: Decodable {
     var evolutionChainURL: Url?
     var evolutionDetails: Chain?
     private var _pokemonURL: String?
+    var nextEvoId: String?
     
    
     
@@ -151,6 +149,12 @@ struct Pokemon: Decodable {
         case description = "flavor_text_entries"
         case evolutionChainURL = "evolution_chain"
         case evolutionDetails = "chain"
+        case nextEvoId = "nextEvoId"
+    }
+    
+    var nextEvolutionId: String {
+        
+        return nextEvoId!
     }
     
     
