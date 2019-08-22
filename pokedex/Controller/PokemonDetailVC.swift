@@ -23,7 +23,7 @@ class PokemonDetailVC: UIViewController {
     @IBOutlet weak var weightLbl: UILabel!
     @IBOutlet weak var attackLbl: UILabel!
     
-    @IBOutlet weak var secondNextEvoImg: UIImageView!
+    
     @IBOutlet weak var nextEvoImg: UIImageView!
     @IBOutlet weak var evoLbl: UILabel!
     
