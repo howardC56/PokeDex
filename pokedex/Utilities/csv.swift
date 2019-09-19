@@ -1,11 +1,3 @@
-//
-//  csv.swift
-//  pokedex
-//
-//  Created by Howard Chang on 7/1/19.
-//  Copyright © 2019 Howard Chang. All rights reserved.
-//
-
 import Foundation
 
 public class CSV {
@@ -17,7 +9,6 @@ public class CSV {
     public init (content: String?, delimiter: CharacterSet, encoding: UInt) throws {
         if let csvStringToParse = content {
             self.delimiter = delimiter
-            
             let newLine = CharacterSet.newlines
             var lines: [String] = []
             csvStringToParse.trimmingCharacters(in: newLine).enumerateLines {
@@ -72,9 +63,7 @@ public class CSV {
         for header in self.headers {
             let column = self.rows.map { row in row[header] != nil ? row[header]! : "" }
             columns[header] = column
-            
-        }
+            }
         return columns
     }
-    
 }
