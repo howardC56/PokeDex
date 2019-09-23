@@ -24,7 +24,7 @@ class MainPokedexViewController: UIViewController, UICollectionViewDelegate, UIC
         navigationController?.navigationBar.barTintColor = .mainColor()
         navigationController?.navigationBar.barStyle = .black
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
-        }
+    }
     
     func parsePokemonCsv() {
         let path = Bundle.main.path(forResource: "pokemon", ofType: "csv")!
@@ -49,15 +49,15 @@ class MainPokedexViewController: UIViewController, UICollectionViewDelegate, UIC
                 poke = filteredPokemon[indexPath.row]
                 cell.configureCell(pokemon: poke)
             } else {
-            poke = pokemon[indexPath.row]
+                poke = pokemon[indexPath.row]
                 cell.configureCell(pokemon: poke)
             }
             return cell
         } else {
             return UICollectionViewCell()
         }
-        }
-
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         var poke: Pokemon!
         if inSearchMode {
@@ -65,7 +65,6 @@ class MainPokedexViewController: UIViewController, UICollectionViewDelegate, UIC
         } else {
             poke = pokemon[indexPath.row]
         }
-        print(poke)
         performSegue(withIdentifier: "PokemonDetailViewController", sender: poke)
     }
     

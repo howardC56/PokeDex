@@ -35,7 +35,7 @@ struct Url: Decodable {
     var url: String
     
     enum CodingKeys: String, CodingKey {
-    case url = "url"
+        case url = "url"
     }
 }
 
@@ -119,7 +119,7 @@ struct Pokemon: Decodable {
     private var _pokemonURL: String?
     var nextEvoId: String?
     
-   enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case types = "types"
         case height = "height"
         case weight = "weight"
@@ -148,5 +148,5 @@ struct Pokemon: Decodable {
         self.pokeName = name
         self.pokePokedexId = pokedexId
         self._pokemonURL = "https://pokeapi.co/api/v2/pokemon/\(self.pokedexId)/"
-        }
+    }
 }
