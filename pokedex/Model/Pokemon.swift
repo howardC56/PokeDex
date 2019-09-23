@@ -1,14 +1,4 @@
-//
-//  Pokemon.swift
-//  pokedex
-//
-//  Created by Howard Chang on 6/27/19.
-//  Copyright © 2019 Howard Chang. All rights reserved.
-//
-
 import Foundation
-
-
 // Pokemon evolution
 struct PokeName: Decodable {
     var name: String?
@@ -30,8 +20,6 @@ struct Species: Decodable {
     }
 }
 
-
-
 struct Chain: Decodable {
     var evolvesTo: [Species]?
     var species: PokeName
@@ -39,7 +27,7 @@ struct Chain: Decodable {
     enum CodingKeys: String, CodingKey {
         case evolvesTo = "evolves_to"
         case species = "species"
-}
+    }
 }
 
 // pokemon evolution url
@@ -47,7 +35,7 @@ struct Url: Decodable {
     var url: String
     
     enum CodingKeys: String, CodingKey {
-    case url = "url"
+        case url = "url"
     }
 }
 
@@ -89,7 +77,6 @@ struct Stats: Decodable {
         case baseStat = "base_stat"
         case stat = "stat"
     }
-    
 }
 
 struct StatName: Decodable {
@@ -98,7 +85,6 @@ struct StatName: Decodable {
     enum CodingKeys: String, CodingKey {
         case name = "name"
     }
-    
 }
 
 // Pokemon Type
@@ -110,8 +96,6 @@ struct Name: Decodable {
     }
 }
 
-
-
 struct Types: Decodable {
     var type: Name?
     
@@ -119,8 +103,6 @@ struct Types: Decodable {
         case type = "type"
     }
 }
-
-
 
 struct Pokemon: Decodable {
     var pokeName: String?
@@ -137,8 +119,6 @@ struct Pokemon: Decodable {
     private var _pokemonURL: String?
     var nextEvoId: String?
     
-   
-    
     enum CodingKeys: String, CodingKey {
         case types = "types"
         case height = "height"
@@ -153,12 +133,8 @@ struct Pokemon: Decodable {
     }
     
     var nextEvolutionId: String {
-        
         return nextEvoId!
     }
-    
-    
-    
     
     var name: String {
         return pokeName!
@@ -171,11 +147,6 @@ struct Pokemon: Decodable {
     init(name: String, pokedexId: Int) {
         self.pokeName = name
         self.pokePokedexId = pokedexId
-        self._pokemonURL = "\(URL_BASE)\(URL_POKEMON)\(self.pokedexId)/"
-        
+        self._pokemonURL = "https://pokeapi.co/api/v2/pokemon/\(self.pokedexId)/"
     }
-    
-
-    
-    
 }
