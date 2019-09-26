@@ -21,8 +21,6 @@ class MainPokedexViewController: UIViewController, UICollectionViewDelegate, UIC
     
     func configureNavigationBar() {
         navigationItem.title = "PokeDex"
-        navigationController?.navigationBar.barTintColor = .mainColor()
-        navigationController?.navigationBar.barStyle = .black
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
     }
     

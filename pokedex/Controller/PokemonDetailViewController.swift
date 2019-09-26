@@ -33,8 +33,6 @@ class PokemonDetailViewController: UIViewController, UICollectionViewDelegate, U
     }
     
     func configureNavigationBar() {
-        navigationController?.navigationBar.barTintColor = .mainColor()
-        navigationController?.navigationBar.barStyle = .black
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
     }
     

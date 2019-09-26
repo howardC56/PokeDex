@@ -16,10 +16,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let font = [NSAttributedString.Key.font: UIFont(name: "MarkerFelt-Thin", size: 30)!]
-        UINavigationBar.appearance().titleTextAttributes = font
-        UIBarButtonItem.appearance().setTitleTextAttributes(font, for: .normal)
         
-        // Override point for customization after application launch.
+        UINavigationBar.appearance().barTintColor = .mainColor()
+        UINavigationBar.appearance().titleTextAttributes = font//[NSAttributedString.Key.foregroundColor: UIColor.white]
+        
+        UINavigationBar.appearance().barStyle = .black
+    
         return true
     }
 
